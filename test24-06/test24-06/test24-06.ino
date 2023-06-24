@@ -1,14 +1,8 @@
+// Inclure les bibliothèques nécessaires
 #include <SoftwareSerial.h>
 
-#define rxPin 2
-#define txPin 3
-#define baudrate 38400
-
-String msg;
-
-SoftwareSerial hc05(rxPin ,txPin);
-
-/*SoftwareSerial bluetoothSerial(3, 2); // RX, TX*/
+// Configuration du module Bluetooth
+SoftwareSerial bluetoothSerial(2, 3); // RX, TX
 
 int laserPin = 13;
 
@@ -48,14 +42,9 @@ void setup() {
   /*digitalWrite(laserPin, HIGH);*/
 
   // Configuration de la communication Bluetooth
-  /*bluetoothSerial.begin(9600);*/
+  bluetoothSerial.begin(9600);
 
-  pinMode(rxPin,INPUT);
-  pinMode(txPin,OUTPUT);
-  
-  Serial.begin(38400);
-  Serial.println("ENTER AT Commands:");
-  hc05.begin(baudrate);
+  Serial.begin(9600);
 
 }
 
@@ -93,33 +82,13 @@ void loop() {
       digitalWrite(BROCHE_LED_ROUGE, HIGH);
       
       // Le timer est plein, afficher le message et le réinitialiser
-      /*Serial.println("Il est plein");*/
+      Serial.println("Il est plein");
       
       // Le timer est plein, envoyer le message via Bluetooth
-      /*bluetoothSerial.println("Il est plein");*/
+      bluetoothSerial.println("Il est plein");
       
       tempsDebut = 0;
-      // Arrêter le timer
       timerActif = false;
     }
   }
-
-  readSerialPort();
-    if(msg!="") hc05.println(msg);
-    
-    if (hc05.available()>0){
-      Serial.write(hc05.read());
-    }
-}
-
-void readSerialPort(){
-  msg="";
- while (Serial.available()) {
-   delay(10);  
-   if (Serial.available() >0) {
-     char c = Serial.read();  //gets one byte from serial buffer
-     msg += c; //makes the string readString
-   }
- }
-
 }

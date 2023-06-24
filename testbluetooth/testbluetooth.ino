@@ -1,25 +1,51 @@
 #include <SoftwareSerial.h>
 
-char message;
+SoftwareSerial ArduinoSlave(2,3);
+String answer;
+String msg;
 
-SoftwareSerial bluetooth(2, 3); // (RX, TX) (pin Rx BT, pin Tx BT)
+void setup(){
 
-void setup()
-{
-    // Ouvre la voie série avec l'ordinateur
-    Serial.begin(38400);
-    // Ouvre la voie série avec le module BT
-    bluetooth.begin(38400);
+  Serial.begin(9600);
+  Serial.println("ENTER Commands:");
+  ArduinoSlave.begin(9600);
+                
 }
 
-void loop() // run over and over
-{
-    if (bluetooth.available()) {
-  message = bluetooth.read();
-        Serial.print(message);
-    }
-    if (Serial.available()) {
-  message = Serial.read();
-  bluetooth.print(message);
-    }
+void loop(){
+  //Read command from monitor
+  readSerialPort();
+  
+  //Read answer from slave
+   while (ArduinoSlave.available()) {
+   delay(10);  
+   if (ArduinoSlave.available() >0) {
+     char c = ArduinoSlave.read();  //gets one byte from serial buffer
+     answer += c; //makes the string readString
+   }
+ }
+  //Send data to slave
+  if(msg!=""){
+    Serial.print("Master sent : ");
+    Serial.println(msg);
+    ArduinoSlave.print(msg);
+    msg="";
+  }
+  //Send answer to monitor
+  if(answer!=""){
+    Serial.print("Slave recieved : ");
+    Serial.println(answer);
+    answer="";
+  }
+}
+
+void readSerialPort(){
+ while (Serial.available()) {
+   delay(10);  
+   if (Serial.available() >0) {
+     char c = Serial.read();  //gets one byte from serial buffer
+     msg += c; //makes the string readString
+   }
+ }
+ Serial.flush();
 }
