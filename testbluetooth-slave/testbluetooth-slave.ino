@@ -1,25 +1,28 @@
 #include <SoftwareSerial.h>
-
-char message;
-
-SoftwareSerial bluetooth(2, 3); // (RX, TX) (pin Rx BT, pin Tx BT)
-
-void setup()
-{
-    // Ouvre la voie série avec l'ordinateur
-    Serial.begin(38400);
-    // Ouvre la voie série avec le module BT
-    bluetooth.begin(38400);
+SoftwareSerial ArduinoMaster(2,3);
+String msg;
+void setup(){
+   Serial.begin(9600);
+  ArduinoMaster.begin(9600);      
 }
-
-void loop() // run over and over
-{
-    if (bluetooth.available()) {
-  message = bluetooth.read();
-        Serial.print(message);
+void loop(){
+  readSerialPort();
+  
+  // Send answer to master
+  if(msg!=""){
+      Serial.print("Master sent : " );
+      Serial.println(msg);
+      ArduinoMaster.print(msg);
+      msg="";
+  }
+}
+void readSerialPort(){
+ while (ArduinoMaster.available()) {
+    delay(10);
+    if (ArduinoMaster.available() >0) {
+        char c = ArduinoMaster.read();  //gets one byte from serial buffer
+        msg += c; //makes the string readString
     }
-    if (Serial.available()) {
-  message = Serial.read();
-  bluetooth.print(message);
-    }
+ }
+ ArduinoMaster.flush();
 }
