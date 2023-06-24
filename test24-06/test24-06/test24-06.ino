@@ -1,9 +1,14 @@
 #include <SoftwareSerial.h>
 
-SoftwareSerial bluetoothSerial(10, 11); // RX, TX
+#define rxPin 2
+#define txPin 3
+#define baudrate 38400
 
-int capteur_lum = 0; // capteur branché sur le port 0
-int analog_lum; // valeur analogique envoyé par le capteur
+String msg;
+
+SoftwareSerial hc05(rxPin ,txPin);
+
+/*SoftwareSerial bluetoothSerial(3, 2); // RX, TX*/
 
 int laserPin = 13;
 
@@ -14,8 +19,8 @@ const int SEUIL_PHOTORESISTANCE = 90;
 const int BROCHE_PHOTORESISTANCE = A0;
 
 // Broches pour les LED
-const int BROCHE_LED_VERTE = 2;
-const int BROCHE_LED_ROUGE = 3;
+const int BROCHE_LED_VERTE = 8;
+const int BROCHE_LED_ROUGE = 9;
 
 // Durée maximale du timer en millisecondes (30 secondes)
 const unsigned long DUREE_MAX_TIMER = 30 * 1000;
@@ -40,10 +45,17 @@ void setup() {
   digitalWrite(BROCHE_LED_VERTE, HIGH);
 
   // Allumer le laser
-  digitalWrite(laserPin, HIGH);
+  /*digitalWrite(laserPin, HIGH);*/
 
   // Configuration de la communication Bluetooth
-  bluetoothSerial.begin(9600);
+  /*bluetoothSerial.begin(9600);*/
+
+  pinMode(rxPin,INPUT);
+  pinMode(txPin,OUTPUT);
+  
+  Serial.begin(38400);
+  Serial.println("ENTER AT Commands:");
+  hc05.begin(baudrate);
 
 }
 
@@ -81,15 +93,33 @@ void loop() {
       digitalWrite(BROCHE_LED_ROUGE, HIGH);
       
       // Le timer est plein, afficher le message et le réinitialiser
-      Serial.println("Il est plein");
+      /*Serial.println("Il est plein");*/
       
       // Le timer est plein, envoyer le message via Bluetooth
-      bluetoothSerial.println("Il est plein");
+      /*bluetoothSerial.println("Il est plein");*/
       
       tempsDebut = 0;
       // Arrêter le timer
       timerActif = false;
     }
   }
+
+  readSerialPort();
+    if(msg!="") hc05.println(msg);
+    
+    if (hc05.available()>0){
+      Serial.write(hc05.read());
+    }
+}
+
+void readSerialPort(){
+  msg="";
+ while (Serial.available()) {
+   delay(10);  
+   if (Serial.available() >0) {
+     char c = Serial.read();  //gets one byte from serial buffer
+     msg += c; //makes the string readString
+   }
+ }
 
 }
