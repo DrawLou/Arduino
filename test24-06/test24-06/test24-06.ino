@@ -24,7 +24,7 @@ int valeurPhotorestance;
 unsigned long tempsDebut;
 boolean timerActif = false;
 
-bool messageEnvoye = false; // Variable pour suivre si le message a été envoyé
+boolean messageEnvoye = false; // Variable pour suivre si le message a été envoyé
 
 
 void setup() {
@@ -82,23 +82,25 @@ void loop() {
        // La photorésistance atteint le seuil, allumer la LED rouge et éteindre la LED verte
       digitalWrite(BROCHE_LED_VERTE, LOW);
       digitalWrite(BROCHE_LED_ROUGE, HIGH);
-      
-      // Le timer est plein, afficher le message et le réinitialiser
-      Serial.println("Il est plein");
-      
-      // Le timer est plein, envoyer le message via Bluetooth
-      bluetoothSerial.println("Il est plein");
+
+      // Vérifier si le message n'a pas été déjà envoyé
+      if (!messageEnvoye) {
+        // Le timer est plein, afficher le message et le réinitialiser
+        Serial.println("Il est plein");
+        
+        // Le timer est plein, envoyer le message via Bluetooth
+        bluetoothSerial.println("Il est plein");
+        
+        messageEnvoye = true;
+      }
       
       tempsDebut = 0;
       timerActif = false;
     }
   }
 
-  // Exemple de condition pour l'envoi du message "Il est plein"
-  bool condition = true; // Modifier la condition selon vos besoins
-
-  if (condition && !messageEnvoye) {
-    bluetoothSerial.println("Il est plein");
-    messageEnvoye = true; // Marquer le message comme envoyé pour ne pas le répéter
+  // Vérifier si la valeur de la photorésistance a changé
+  if (valeurPhotorestance > SEUIL_PHOTORESISTANCE) {
+    messageEnvoye = false; // Réinitialiser le flag d'envoi du message
   }
 }
