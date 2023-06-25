@@ -6,7 +6,7 @@ SoftwareSerial bluetoothSerial(2, 3); // RX, TX
 
 LiquidCrystal_I2C lcd (0x27,20,4); // définit le type d'écran lcd 16 x 2
 
-const int boutonPin = 2;
+const int boutonPin = 8;
 bool boutonPresse = false;
 
 void setup() {
