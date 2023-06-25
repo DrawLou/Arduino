@@ -1,18 +1,20 @@
 #include <SoftwareSerial.h>
-
 #include "Wire.h"
 #include "LiquidCrystal_I2C.h"
 
-SoftwareSerial bluetoothSerial(10, 11); // RX, TX
+SoftwareSerial bluetoothSerial(2, 3); // RX, TX
 
-LiquidCrystal_I2C LCD(0x27,20,4); // définit le type d'écran lcd 16 x 2
+LiquidCrystal_I2C lcd (0x27,20,4); // définit le type d'écran lcd 16 x 2
 
 void setup() {
-   LCD.init(); // initialisation de l'afficheur
-   LCD.backlight();
+   lcd.init(); // initialisation de l'afficheur
+   lcd.backlight();
    
-   LCD.setCursor(0, 0);
-   LCD.print("Etat du bac :");
+   lcd.setCursor(0, 0);
+   lcd.print("Etat du bac :");
+
+   bluetoothSerial.begin(9600);
+   Serial.begin(9600);
 }
 
 void loop() {
@@ -20,9 +22,10 @@ void loop() {
     String message = bluetoothSerial.readStringUntil('\n');
     lcd.setCursor(0, 1);
     lcd.print(message);
+    Serial.println(message);
   } else {
-    LCD.setCursor(0, 1);
-    LCD.print("depose possible");
+    lcd.setCursor(0, 1);
+    lcd.print("depose possible");
   }
 
 }
