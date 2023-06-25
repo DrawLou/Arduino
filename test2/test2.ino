@@ -32,14 +32,16 @@ void loop() {
     Serial.println(message);
   }
 
-  // Vérifier l'état du bouton
-  /*if (digitalRead(boutonPin) == LOW) {
-    boutonPresse = true;
-    if (boutonPresse) {
-      // Envoyer un message spécial à l'émetteur pour reprendre le programme
-      bluetoothSerial.println("Reprendre programme");
-      boutonPresse = false;
+  // Vérifier si le bouton a été pressé
+  if (digitalRead(boutonPin) == LOW) {
+    delay(50); // Délai de rebond pour éviter les faux déclenchements
+    if (digitalRead(boutonPin) == LOW) {
+      // Le bouton a été pressé, réinitialiser l'affichage
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Etat du bac :");
+      lcd.setCursor(0, 1);
+      lcd.print("depose possible");
     }
-  }*/
-
+  }
 }
