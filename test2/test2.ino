@@ -15,7 +15,8 @@ void setup() {
    
    lcd.setCursor(0, 0);
    lcd.print("Etat du bac :");
-
+   lcd.setCursor(0, 1);
+   lcd.print("depose possible");
    bluetoothSerial.begin(9600);
    Serial.begin(9600);
 }
@@ -23,23 +24,22 @@ void setup() {
 void loop() {
   if (bluetoothSerial.available()) {
     String message = bluetoothSerial.readStringUntil('\n');
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Etat du bac :");
     lcd.setCursor(0, 1);
     lcd.print(message);
     Serial.println(message);
-  } else {
-    lcd.setCursor(0, 1);
-    lcd.print("depose possible");
   }
 
   // Vérifier l'état du bouton
-  if (digitalRead(boutonPin) == LOW) {
+  /*if (digitalRead(boutonPin) == LOW) {
     boutonPresse = true;
-  } else {
     if (boutonPresse) {
       // Envoyer un message spécial à l'émetteur pour reprendre le programme
       bluetoothSerial.println("Reprendre programme");
       boutonPresse = false;
     }
-  }
+  }*/
 
 }
