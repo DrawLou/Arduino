@@ -24,6 +24,8 @@ int valeurPhotorestance;
 unsigned long tempsDebut;
 boolean timerActif = false;
 
+bool messageEnvoye = false; // Variable pour suivre si le message a été envoyé
+
 
 void setup() {
   // Configuration de la broche de la photorésistance en entrée
@@ -90,5 +92,13 @@ void loop() {
       tempsDebut = 0;
       timerActif = false;
     }
+  }
+
+  // Exemple de condition pour l'envoi du message "Il est plein"
+  bool condition = true; // Modifier la condition selon vos besoins
+
+  if (condition && !messageEnvoye) {
+    bluetoothSerial.println("Il est plein");
+    messageEnvoye = true; // Marquer le message comme envoyé pour ne pas le répéter
   }
 }
