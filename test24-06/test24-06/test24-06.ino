@@ -27,7 +27,7 @@ void setup() {
   digitalWrite(laserPin, HIGH); // Allumer le laser
 
   bluetoothSerial.begin(9600); // Démarre la communication série Bluetooth à 9600 bauds
-  Serial.begin(9600); // Démarre la communication série avec l'ordinateur à 9600 bauds
+  /*Serial.begin(9600);*/ // Démarre la communication série avec l'ordinateur à 9600 bauds
 }
 
 void loop() {
@@ -47,7 +47,7 @@ void loop() {
     unsigned long tempsEcoule = millis() - tempsDebut; // Calcul du temps écoulé depuis le début du timer
 
     if (tempsEcoule >= DUREE_MAX_TIMER && !messageEnvoye) { // Si la durée maximale du timer est atteinte et que le message n'a pas encore été envoyé
-      Serial.println("Il est plein"); // Affiche le message dans le moniteur série de l'ordinateur
+      /*Serial.println("Il est plein");*/ // Affiche le message dans le moniteur série de l'ordinateur
       bluetoothSerial.println("Il est plein"); // Envoie le message via la communication série Bluetooth
 
       digitalWrite(BROCHE_LED_VERTE, LOW); // Éteint la LED verte
