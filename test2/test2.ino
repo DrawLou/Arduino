@@ -4,10 +4,12 @@
 
 SoftwareSerial bluetoothSerial(2, 3); // RX, TX
 
-LiquidCrystal_I2C lcd (0x27,20,4); // définit le type d'écran lcd 20 x 4
+LiquidCrystal_I2C lcd (0x27,20,4); // définit le type d'écran lcd 16 x 2
 
 const int boutonPin = 8;
 bool boutonPresse = false;
+unsigned long dernierDebounceTime = 0;
+unsigned long tempsDebounce = 200;
 
 void setup() {
    lcd.init(); // initialisation de l'afficheur
@@ -24,6 +26,36 @@ void setup() {
 }
 
 void loop() {
+  // Lecture de l'état du bouton avec debouncing
+  int boutonEtat = digitalRead(boutonPin);
+
+  // Vérifier si l'état du bouton a changé
+  if (boutonEtat != boutonPresse) {
+    dernierDebounceTime = millis(); // Mettre à jour le dernier temps de détection de changement du bouton
+  }
+
+  // Vérifier si suffisamment de temps s'est écoulé depuis le dernier changement du bouton
+  if ((millis() - dernierDebounceTime) > tempsDebounce) {
+    // Mettre à jour l'état du bouton après la période de debouncing
+    if (boutonEtat != boutonPresse) {
+      boutonPresse = boutonEtat;
+
+      // Vérifier si le bouton a été pressé
+      if (boutonPresse == LOW) {
+        // Le bouton a été pressé, réinitialiser l'affichage
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Etat du bac :");
+        lcd.setCursor(0, 1);
+        lcd.print("depose possible");
+
+        // Envoyer le message de réinitialisation à l'Arduino émetteur via Bluetooth
+        bluetoothSerial.println("RESET");
+      }
+    }
+  }
+
+  // Vérifier si un message est disponible via Bluetooth
   if (bluetoothSerial.available()) {
     String message = bluetoothSerial.readStringUntil('\n');
     lcd.clear();
@@ -32,18 +64,5 @@ void loop() {
     lcd.setCursor(0, 1);
     lcd.print(message);
     Serial.println(message);
-  }
-
-  // Vérifier si le bouton a été pressé
-  if (digitalRead(boutonPin) == LOW) {
-    delay(50); // Délai de rebond pour éviter les faux déclenchements
-    if (digitalRead(boutonPin) == LOW) {
-      // Le bouton a été pressé, réinitialiser l'affichage
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("Etat du bac :");
-      lcd.setCursor(0, 1);
-      lcd.print("depose possible");
-    }
   }
 }
