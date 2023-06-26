@@ -15,12 +15,13 @@ const int BROCHE_LED_VERTE = 8;
 const int BROCHE_LED_ROUGE = 9;
 
 // Durée maximale du timer en millisecondes (30 secondes)
-const unsigned long DUREE_MAX_TIMER = 30*1000; // 30 secondes
+const unsigned long DUREE_MAX_TIMER = 30000; // 30 secondes
 
 // Variables pour la photorésistance et le timer
 int valeurPhotorestance;
 unsigned long tempsDebut;
 boolean timerActif = false;
+boolean messageEnvoye = false;
 
 void setup() {
   pinMode(BROCHE_PHOTORESISTANCE, INPUT);
@@ -43,9 +44,6 @@ void loop() {
       timerActif = true;
     }
   } else {
-    digitalWrite(BROCHE_LED_VERTE, HIGH);
-    digitalWrite(BROCHE_LED_ROUGE, LOW);
-
     timerActif = false;
     tempsDebut = 0;
   }
@@ -57,20 +55,27 @@ void loop() {
       digitalWrite(BROCHE_LED_VERTE, LOW);
       digitalWrite(BROCHE_LED_ROUGE, HIGH);
 
-      Serial.println("Il est plein");
-      bluetoothSerial.println("Il est plein");
+      if (!messageEnvoye) {
+        Serial.println("Il est plein");
+        bluetoothSerial.println("Il est plein");
+        messageEnvoye = true;
+      }
 
       tempsDebut = 0;
       timerActif = false;
     }
   }
-  
+
+  if (valeurPhotorestance > SEUIL_PHOTORESISTANCE) {
+    messageEnvoye = false;
+  }
+
   if (bluetoothSerial.available()) {
     String message = bluetoothSerial.readStringUntil('\n');
     if (message.equals("RESET")) {
       digitalWrite(BROCHE_LED_VERTE, HIGH);
       digitalWrite(BROCHE_LED_ROUGE, LOW);
-      
+
       tempsDebut = 0;
       timerActif = false;
     }
