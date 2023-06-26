@@ -11,6 +11,8 @@ bool boutonPresse = false;
 unsigned long dernierDebounceTime = 0;
 unsigned long tempsDebounce = 200;
 
+bool affichageInitial = true;
+
 void setup() {
   lcd.init(); // Initialisation de l'afficheur
   lcd.backlight();
@@ -44,11 +46,7 @@ void loop() {
       // Vérifier si le bouton a été pressé
       if (boutonPresse == LOW) {
         // Le bouton a été pressé, réinitialiser l'affichage
-        lcd.clear();
-        lcd.setCursor(0, 0);
-        lcd.print("Etat du bac :");
-        lcd.setCursor(0, 1);
-        lcd.print("depose possible");
+        affichageInitial = true;
       }
     }
   }
@@ -56,9 +54,12 @@ void loop() {
   // Vérifier si un message est disponible via Bluetooth
   if (bluetoothSerial.available()) {
     String message = bluetoothSerial.readStringUntil('\n');
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Etat du bac :");
+    if (affichageInitial) {
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Etat du bac :");
+      affichageInitial = false;
+    }
     lcd.setCursor(0, 1);
     lcd.print(message);
     Serial.println(message);
