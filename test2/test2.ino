@@ -51,6 +51,8 @@ void loop() {
     }
   }
 
+  digitalRead(boutonPin)
+
   // Vérifier si un message est disponible via Bluetooth
   if (bluetoothSerial.available()) {
     String message = bluetoothSerial.readStringUntil('\n');
