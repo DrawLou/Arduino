@@ -23,7 +23,7 @@ void setup() {
   lcd.print("depose possible");
 
   bluetoothSerial.begin(9600); // Démarre la communication série Bluetooth à 9600 bauds
-  Serial.begin(9600); // Démarre la communication série avec l'ordinateur à 9600 bauds
+  /*Serial.begin(9600);*/ // Démarre la communication série avec l'ordinateur à 9600 bauds
 
   pinMode(boutonPin, INPUT); // Configure la broche du bouton en entrée
 
@@ -64,6 +64,6 @@ void loop() {
     }
     lcd.setCursor(0, 1);
     lcd.print(message);
-    Serial.println(message);
+    /*Serial.println(message);*/
   }
 }
