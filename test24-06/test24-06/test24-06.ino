@@ -1,94 +1,57 @@
-// Inclure les bibliothèques nécessaires
 #include <SoftwareSerial.h>
 
-// Configuration du module Bluetooth
 SoftwareSerial bluetoothSerial(2, 3); // RX, TX
 
-int laserPin = 13;
-
-// Constante pour le seuil de la photorésistance
 const int SEUIL_PHOTORESISTANCE = 300;
-
-// Broche pour la photorésistance
 const int BROCHE_PHOTORESISTANCE = A0;
-
-// Broches pour les LED
 const int BROCHE_LED_VERTE = 8;
 const int BROCHE_LED_ROUGE = 9;
+const unsigned long DUREE_MAX_TIMER = 20000; // 20 secondes
 
-// Durée maximale du timer en millisecondes (30 secondes)
-const unsigned long DUREE_MAX_TIMER = 20 * 1000;
-
-// Variables pour la photorésistance et le timer
 int valeurPhotorestance;
 unsigned long tempsDebut;
 boolean timerActif = false;
-
+boolean messageEnvoye = false;
 
 void setup() {
-  // Configuration de la broche de la photorésistance en entrée
   pinMode(BROCHE_PHOTORESISTANCE, INPUT);
-
-  pinMode(laserPin, OUTPUT);
-
-  // Configuration des broches des LED en sortie
   pinMode(BROCHE_LED_VERTE, OUTPUT);
   pinMode(BROCHE_LED_ROUGE, OUTPUT);
 
-  // Allumer la LED verte
   digitalWrite(BROCHE_LED_VERTE, HIGH);
 
-  // Allumer le laser
-  /*digitalWrite(laserPin, HIGH);*/
-
-  // Configuration de la communication Bluetooth
   bluetoothSerial.begin(9600);
-
   Serial.begin(9600);
-
 }
 
 void loop() {
-  // Lire la valeur de la photorésistance
   valeurPhotorestance = analogRead(BROCHE_PHOTORESISTANCE);
 
-  // Vérifier si la valeur de la photorésistance est inférieure ou égale au seuil
   if (valeurPhotorestance <= SEUIL_PHOTORESISTANCE) {
-    
-    // La photorésistance atteint le seuil, lancer le timer si ce n'est pas déjà fait
     if (!timerActif) {
       tempsDebut = millis();
       timerActif = true;
+      messageEnvoye = false;
     }
   } else {
-    // La photorésistance est au-dessus du seuil, allumer la LED verte et éteindre la LED rouge
-    digitalWrite(BROCHE_LED_VERTE, HIGH);
-    digitalWrite(BROCHE_LED_ROUGE, LOW);
-    
-    // La photorésistance est au-dessus du seuil, arrêter le timer et le réinitialiser
     timerActif = false;
-    tempsDebut = 0;
   }
 
-  // Vérifier si le timer est actif
   if (timerActif) {
-    // Calculer la durée écoulée en millisecondes
     unsigned long tempsEcoule = millis() - tempsDebut;
 
-    // Vérifier si la durée maximale du timer est atteinte
-    if (tempsEcoule >= DUREE_MAX_TIMER) {
-       // La photorésistance atteint le seuil, allumer la LED rouge et éteindre la LED verte
+    if (tempsEcoule >= DUREE_MAX_TIMER && !messageEnvoye) {
+      Serial.println("Il est plein");
+      bluetoothSerial.println("Il est plein");
+
       digitalWrite(BROCHE_LED_VERTE, LOW);
       digitalWrite(BROCHE_LED_ROUGE, HIGH);
-      
-      // Le timer est plein, afficher le message et le réinitialiser
-      Serial.println("Il est plein");
-      
-      // Le timer est plein, envoyer le message via Bluetooth
-      bluetoothSerial.println("Il est plein");
-      
-      tempsDebut = 0;
-      timerActif = false;
+
+      messageEnvoye = true;
     }
+  } else {
+    digitalWrite(BROCHE_LED_VERTE, HIGH);
+    digitalWrite(BROCHE_LED_ROUGE, LOW);
+    messageEnvoye = false; // Réinitialiser la variable lorsqu'il n'y a pas de détection
   }
 }
