@@ -6,7 +6,7 @@ SoftwareSerial bluetoothSerial(2, 3); // RX, TX
 
 LiquidCrystal_I2C lcd(0x27, 20, 4); // Définit le type d'écran lcd 16 x 2
 
-const int boutonPin = 8;
+const int boutonPin = 7;
 bool boutonPresse = false;
 unsigned long dernierDebounceTime = 0;
 unsigned long tempsDebounce = 200;
@@ -25,7 +25,7 @@ void setup() {
   bluetoothSerial.begin(9600);
   Serial.begin(9600);
 
-  pinMode(boutonPin, INPUT_PULLUP); // Configure la broche du bouton en entrée avec résistance de rappel
+  pinMode(boutonPin, INPUT); // Configure la broche du bouton en entrée avec résistance de rappel
 }
 
 void loop() {
