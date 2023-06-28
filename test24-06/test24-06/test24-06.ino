@@ -6,7 +6,7 @@ const int SEUIL_PHOTORESISTANCE = 300; // Seuil de valeur de la photoresistance 
 const int BROCHE_PHOTORESISTANCE = A0; // Broche analogique de la photoresistance
 const int BROCHE_LED_VERTE = 8; // Broche pour la LED verte
 const int BROCHE_LED_ROUGE = 9; // Broche pour la LED rouge
-const unsigned long DUREE_MAX_TIMER = 20000; // Durée maximale du timer en millisecondes (20 secondes)
+const unsigned long DUREE_MAX_TIMER = 10000; // Durée maximale du timer en millisecondes (10 secondes)
 
 int laserPin = 13; // Broche pour le laser
 
